@@ -22,7 +22,7 @@
             </a>
         </h1>
 
-        <nav aria-label="Navegación principal">
+        <nav aria-label="Navegación principal" id="navPrincipal">
             <ul>
                 <li><a href="#quiensoy">Quién soy</a></li>
                 <li><a href="#experiencia">Experiencia</a></li>
@@ -31,7 +31,21 @@
                 <li><a href="#contacto">Contacto</a></li>
             </ul>
         </nav>
+
+        <div class="header-acciones">
+            <button id="modoOscuroBtn" class="modo-oscuro-btn" aria-label="Cambiar modo oscuro">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="menuHamburguesa" class="menu-hamburguesa" aria-label="Abrir menú" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
     </header>
+
+    <div class="overlay-menu" id="overlayMenu"></div>
+
 
     <!-- ===== MAIN ===== -->
     <main>
@@ -85,17 +99,17 @@
                         administrativa con nuevas herramientas tecnológicas para seguir creciendo profesionalmente.
                     </p>
 
-                    <div class="stats">
+                    <div class="stats" id="statsContainer">
                         <div>
-                            <h3>5</h3>
+                            <h3 data-target="5">0</h3>
                             <p>Empresas</p>
                         </div>
                         <div>
-                            <h3>5</h3>
+                            <h3 data-target="3">0</h3>
                             <p>Áreas de experiencia</p>
                         </div>
                         <div>
-                            <h3>2026</h3>
+                            <h3 data-target="2026">0</h3>
                             <p>Formación continua</p>
                         </div>
                     </div>
@@ -367,19 +381,24 @@
 
             <div class="contacto-container">
 
-                <form class="formulario" action="#" method="post" novalidate>
+                <form class="formulario" id="formularioContacto" action="#" method="post" novalidate>
 
                     <label for="nombre">👤 Nombre</label>
                     <input type="text" id="nombre" name="nombre" placeholder="Tu nombre completo" required>
+                    <span class="error-mensaje" id="errorNombre"></span>
 
                     <label for="email">✉️ Email</label>
                     <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                    <span class="error-mensaje" id="errorEmail"></span>
 
                     <label for="mensaje">💬 Mensaje</label>
                     <textarea id="mensaje" name="mensaje" rows="5" placeholder="Escribí tu mensaje acá..."
                         required></textarea>
+                    <span class="error-mensaje" id="errorMensaje"></span>
 
                     <button type="submit">Enviar mensaje</button>
+
+                    <p class="form-status" id="formStatus"></p>
 
                     <p class="aviso">
                         Actualmente estoy abierto a nuevas oportunidades en administración, análisis de datos y
@@ -393,14 +412,20 @@
                     <h3>Contacto Directo</h3>
 
                     <div class="datos-contacto">
-                        <p><iz class="fa-solid fa-location-dot"></iz> C.A.B.A, Argentina</p>
+                        <p><i class="fa-solid fa-location-dot"></i> Buenos Aires, Argentina</p>
+                        <p><i class="fa-solid fa-envelope"></i> sebastian@email.com</p>
+                        <p><i class="fa-solid fa-mobile-screen-button"></i> +54 9 11 xxxx-xxxx</p>
+                    </div>
 
                     <div class="botones-contacto">
-                        <a href="https://wa.me/5491170589719" target="_blank" class="btn-whatsapp">
+                        <a href="https://wa.me/549XXXXXXXXXX" target="_blank" class="btn-whatsapp">
                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                         </a>
                         <a href="https://www.linkedin.com/in/slytellez/" target="_blank" class="btn-linkedin">
                             <i class="fa-brands fa-linkedin"></i> LinkedIn
+                        </a>
+                        <a href="mailto:sebastian@email.com" class="btn-email">
+                            <i class="fa-solid fa-envelope"></i> Email
                         </a>
                     </div>
 
@@ -410,13 +435,13 @@
                             <a href="https://www.linkedin.com/in/slytellez/" target="_blank" aria-label="LinkedIn" class="red-icon red-linkedin">
                                 <i class="fa-brands fa-linkedin-in"></i>
                             </a>
-                            <a href="https://wa.me/5491170589719" target="_blank" aria-label="WhatsApp" class="red-icon red-whatsapp">
+                            <a href="https://wa.me/549XXXXXXXXXX" target="_blank" aria-label="WhatsApp" class="red-icon red-whatsapp">
                                 <i class="fa-brands fa-whatsapp"></i>
                             </a>
-                            <a href="https://github.com/SebCep7" target="_blank" aria-label="GitHub" class="red-icon red-github">
+                            <a href="https://github.com/" target="_blank" aria-label="GitHub" class="red-icon red-github">
                                 <i class="fa-brands fa-github"></i>
                             </a>
-                            <a href="mailto:sebastian.loiteguiytellez@gmail.com" aria-label="Email" class="red-icon red-email">
+                            <a href="mailto:sebastian@email.com" aria-label="Email" class="red-icon red-email">
                                 <i class="fa-solid fa-envelope"></i>
                             </a>
                         </div>
@@ -435,31 +460,12 @@
         <p>&copy; 2026 Sebastián Loitegui. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- ===== CAROUSEL SCRIPT ===== -->
-    <script>
-        const track   = document.getElementById('carouselTrack');
-        const dots    = document.querySelectorAll('.carousel-dot');
-        const btnPrev = document.getElementById('btnPrev');
-        const btnNext = document.getElementById('btnNext');
-        const total   = dots.length;
-        let current   = 0;
+    <!-- BOTÓN VOLVER ARRIBA -->
+    <button id="btnVolverArriba" class="btn-volver-arriba" aria-label="Volver arriba">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
-        function goTo(index) {
-            current = (index + total) % total;
-            track.style.transform = `translateX(-${current * 100}%)`;
-            dots.forEach((d, i) => {
-                d.classList.toggle('active', i === current);
-                d.setAttribute('aria-selected', i === current);
-            });
-        }
-
-        btnPrev.addEventListener('click', () => goTo(current - 1));
-        btnNext.addEventListener('click', () => goTo(current + 1));
-        dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.index)));
-
-        // Auto-avance cada 4 segundos
-        setInterval(() => goTo(current + 1), 4000);
-    </script>
+    <script src="script.js"></script>
 
 </body>
 </html>

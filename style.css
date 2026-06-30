@@ -121,6 +121,88 @@ nav a:hover::after {
 }
 
 /* =========================================
+   ACCIONES DEL HEADER (modo oscuro + hamburguesa)
+========================================= */
+
+.header-acciones {
+    display: none;
+    align-items: center;
+    gap: 14px;
+}
+
+.modo-oscuro-btn {
+    background: transparent;
+    border: 2px solid var(--color-acento);
+    color: var(--color-fondo);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    transition: background var(--transicion), transform var(--transicion);
+}
+
+.modo-oscuro-btn:hover {
+    background: var(--color-acento);
+    transform: rotate(20deg);
+}
+
+/* Botón hamburguesa */
+
+.menu-hamburguesa {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.menu-hamburguesa span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: var(--color-fondo);
+    border-radius: 3px;
+    transition: transform var(--transicion), opacity var(--transicion);
+}
+
+.menu-hamburguesa.activo span:nth-child(1) {
+    transform: translateY(8.5px) rotate(45deg);
+}
+
+.menu-hamburguesa.activo span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-hamburguesa.activo span:nth-child(3) {
+    transform: translateY(-8.5px) rotate(-45deg);
+}
+
+/* Overlay oscuro detrás del menú mobile */
+
+.overlay-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 90;
+    opacity: 0;
+    transition: opacity var(--transicion);
+}
+
+.overlay-menu.activo {
+    display: block;
+    opacity: 1;
+}
+
+/* =========================================
    SECCIONES — BASE
 ========================================= */
 
@@ -184,7 +266,7 @@ section h2 {
 }
 
 .foto-perfil {
-    width: 230px;
+    width: 300px;
     height: auto;
     filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.25));
     animation: flotar 4s ease-in-out infinite;
@@ -939,19 +1021,11 @@ footer {
 
 @media (max-width: 768px) {
     header {
-        flex-direction: column;
-        gap: 14px;
         padding: 16px 5%;
     }
 
     header h1 {
         font-size: 1.8rem;
-    }
-
-    nav ul {
-        gap: 1.2rem;
-        justify-content: center;
-        flex-wrap: wrap;
     }
 
     section {
@@ -1007,5 +1081,212 @@ footer {
         width: 34px;
         height: 34px;
         font-size: 0.9rem;
+    }
+}
+
+/* =========================================
+   MODO OSCURO
+========================================= */
+
+body.modo-oscuro {
+    --color-fondo:      #1c1714;
+    --color-oscuro:     #2a211c;
+    --color-acento:     #BF926B;
+    --color-texto:      #e8d9c8;
+    --color-blanco:     #2a211c;
+    --color-fondo-card: rgba(42, 33, 28, 0.92);
+}
+
+body.modo-oscuro .card,
+body.modo-oscuro .item,
+body.modo-oscuro .certificado,
+body.modo-oscuro .formulario,
+body.modo-oscuro .contacto-directo {
+    background: #2a211c;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.modo-oscuro .cv {
+    background-color: #3a2d24;
+}
+
+body.modo-oscuro .idiomas {
+    background-color: #3a2d24;
+}
+
+body.modo-oscuro .perfil-tags span {
+    color: var(--color-texto);
+}
+
+body.modo-oscuro .formulario input,
+body.modo-oscuro .formulario textarea {
+    background: #1c1714;
+    color: var(--color-texto);
+}
+
+body.modo-oscuro .card li {
+    border-bottom-color: rgba(191, 146, 107, 0.25);
+}
+
+body.modo-oscuro .experiencia-card {
+    background: rgba(42, 33, 28, 0.92);
+}
+
+/* Transición suave entre modos */
+
+body,
+.card, .item, .certificado, .formulario, .contacto-directo,
+.experiencia-card, .cv, .idiomas, .formulario input, .formulario textarea {
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+/* =========================================
+   ANIMACIONES AL HACER SCROLL (REVEAL)
+========================================= */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Respeta a quienes prefieren menos movimiento */
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* =========================================
+   VALIDACIÓN DEL FORMULARIO
+========================================= */
+
+.error-mensaje {
+    display: block;
+    color: #c0392b;
+    font-size: 0.82rem;
+    margin-top: -14px;
+    margin-bottom: 14px;
+    min-height: 16px;
+}
+
+.formulario input.input-error,
+.formulario textarea.input-error {
+    border-color: #c0392b;
+}
+
+.form-status {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-top: 10px;
+    min-height: 20px;
+}
+
+.form-status-exito {
+    color: #2a9d4a;
+}
+
+.form-status-error {
+    color: #c0392b;
+}
+
+/* =========================================
+   BOTÓN VOLVER ARRIBA
+========================================= */
+
+.btn-volver-arriba {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-oscuro);
+    color: var(--color-fondo);
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px);
+    transition: opacity var(--transicion), transform var(--transicion), background var(--transicion), visibility var(--transicion);
+    z-index: 80;
+}
+
+.btn-volver-arriba.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.btn-volver-arriba:hover {
+    background: var(--color-acento);
+}
+
+/* =========================================
+   RESPONSIVE — MENÚ HAMBURGUESA
+========================================= */
+
+@media (max-width: 768px) {
+
+    .header-acciones {
+        display: flex;
+    }
+
+    .menu-hamburguesa {
+        display: flex;
+    }
+
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 75%;
+        max-width: 320px;
+        height: 100vh;
+        background: var(--color-oscuro);
+        z-index: 95;
+        padding: 100px 30px 30px;
+        transition: right 0.4s ease;
+        box-shadow: -8px 0 25px rgba(0, 0, 0, 0.25);
+    }
+
+    nav.activo {
+        right: 0;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.8rem;
+    }
+
+    nav a {
+        font-size: 1.1rem;
+    }
+
+    header {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .btn-volver-arriba {
+        bottom: 20px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
     }
 }
