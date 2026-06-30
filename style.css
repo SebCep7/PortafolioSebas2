@@ -266,7 +266,7 @@ section h2 {
 }
 
 .foto-perfil {
-    width: 300px;
+    width: 250px;
     height: auto;
     filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.25));
     animation: flotar 4s ease-in-out infinite;
