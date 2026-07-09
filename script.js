@@ -252,6 +252,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    btnVolverArriba.addEventListener("click", () => {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+});
+
     /* =========================================================
        7. CAROUSEL DE CERTIFICACIONES
        ========================================================= */
