@@ -1,0 +1,20 @@
+{
+  "name": "sebasweb",
+  "version": "1.0.0",
+  "description": "npm install",
+  "homepage": "https://github.com/SebCep7/PortafolioSebas2#readme",
+  "bugs": {
+    "url": "https://github.com/SebCep7/PortafolioSebas2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SebCep7/PortafolioSebas2.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

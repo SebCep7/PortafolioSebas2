@@ -25,6 +25,8 @@ html {
     --color-texto:      #734002;
     --color-blanco:     #ffffff;
     --color-fondo-card: rgba(255, 255, 255, 0.92);
+    --color-fondo-acento: #ecdfd2;
+    --color-fondo-seccion: #BFA995;
 
     --radio-card:   16px;
     --radio-boton:  12px;
@@ -37,11 +39,33 @@ html {
    BASE
 ========================================= */
 
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+}
+
 body {
     background-color: var(--color-fondo);
     color: var(--color-texto);
     font-family: 'Segoe UI', sans-serif;
     line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+a,
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--color-acento);
+    outline-offset: 3px;
 }
 
 img {
@@ -377,7 +401,7 @@ section h2 {
 
 .cv {
     text-align: center;
-    background-color: #BFA995;
+    background-color: var(--color-fondo-seccion);
     border-radius: var(--radio-card);
     margin: 0 10%;
     padding: 60px 10%;
@@ -490,7 +514,7 @@ section h2 {
 ========================================= */
 
 .habilidades {
-    background-color: #ecdfd2;
+    background-color: var(--color-fondo-acento);
 }
 
 .habilidades-grid {
@@ -714,7 +738,7 @@ section h2 {
 ========================================= */
 
 .idiomas {
-    background-color: #BFA995;
+    background-color: var(--color-fondo-seccion);
     text-align: center;
 }
 
@@ -1158,6 +1182,19 @@ body,
 /* Respeta a quienes prefieren menos movimiento */
 
 @media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
     .reveal {
         opacity: 1;
         transform: none;

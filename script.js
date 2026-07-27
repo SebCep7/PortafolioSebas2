@@ -7,105 +7,104 @@
    4. Contador animado en stats
    5. Validación del formulario de contacto
    6. Botón "volver arriba"
+   7. Carrusel de certificaciones
    ========================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* =========================================================
        1. MENÚ HAMBURGUESA (MOBILE)
        ========================================================= */
 
-    const menuBtn   = document.getElementById('menuHamburguesa');
-    const navMenu   = document.getElementById('navPrincipal');
-    const overlay   = document.getElementById('overlayMenu');
-    const navLinks  = navMenu.querySelectorAll('a');
+    const menuBtn = document.getElementById('menuHamburguesa');
+    const navMenu = document.getElementById('navPrincipal');
+    const overlay = document.getElementById('overlayMenu');
+    const navLinks = navMenu ? navMenu.querySelectorAll('a') : [];
 
-    function abrirMenu() {
-        navMenu.classList.add('activo');
-        overlay.classList.add('activo');
-        menuBtn.classList.add('activo');
-        menuBtn.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden';
+    function toggleMenu(isOpen = undefined) {
+        const shouldOpen = typeof isOpen === 'boolean' ? isOpen : !navMenu.classList.contains('activo');
+
+        navMenu?.classList.toggle('activo', shouldOpen);
+        overlay?.classList.toggle('activo', shouldOpen);
+        menuBtn?.classList.toggle('activo', shouldOpen);
+        menuBtn?.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+        body.style.overflow = shouldOpen ? 'hidden' : '';
     }
 
-    function cerrarMenu() {
-        navMenu.classList.remove('activo');
-        overlay.classList.remove('activo');
-        menuBtn.classList.remove('activo');
-        menuBtn.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-    }
+    menuBtn?.addEventListener('click', () => toggleMenu());
+    overlay?.addEventListener('click', () => toggleMenu(false));
+    navLinks.forEach((link) => link.addEventListener('click', () => toggleMenu(false)));
 
-    menuBtn.addEventListener('click', () => {
-        const estaAbierto = navMenu.classList.contains('activo');
-        estaAbierto ? cerrarMenu() : abrirMenu();
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && navMenu?.classList.contains('activo')) {
+            toggleMenu(false);
+        }
     });
 
-    overlay.addEventListener('click', cerrarMenu);
-
-    // Cierra el menú al hacer click en un link (mobile)
-    navLinks.forEach(link => link.addEventListener('click', cerrarMenu));
-
-    // Cierra el menú si se agranda la ventana a desktop
     window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) cerrarMenu();
+        if (window.innerWidth > 768) {
+            toggleMenu(false);
+        }
     });
-
 
     /* =========================================================
        2. MODO OSCURO / CLARO
        ========================================================= */
 
-    const modoBtn   = document.getElementById('modoOscuroBtn');
-    const modoIcono = modoBtn.querySelector('i');
+    const modoBtn = document.getElementById('modoOscuroBtn');
+    const modoIcono = modoBtn?.querySelector('i');
 
-    // Revisa si el usuario ya eligió un modo en esta sesión
-    function aplicarModoGuardado() {
-        const modoGuardado = sessionStorage.getItem('modo');
-        if (modoGuardado === 'oscuro') {
-            document.body.classList.add('modo-oscuro');
-            modoIcono.classList.replace('fa-moon', 'fa-sun');
+    function aplicarModo(isDark) {
+        body.classList.toggle('modo-oscuro', isDark);
+
+        if (modoIcono) {
+            modoIcono.classList.toggle('fa-moon', !isDark);
+            modoIcono.classList.toggle('fa-sun', isDark);
         }
     }
 
-    modoBtn.addEventListener('click', () => {
-        document.body.classList.toggle('modo-oscuro');
-        const esOscuro = document.body.classList.contains('modo-oscuro');
+    function aplicarModoGuardado() {
+        const modoGuardado = sessionStorage.getItem('modo');
+        if (modoGuardado === 'oscuro') {
+            aplicarModo(true);
+        }
+    }
 
-        modoIcono.classList.toggle('fa-moon', !esOscuro);
-        modoIcono.classList.toggle('fa-sun', esOscuro);
-
+    modoBtn?.addEventListener('click', () => {
+        const esOscuro = !body.classList.contains('modo-oscuro');
+        aplicarModo(esOscuro);
         sessionStorage.setItem('modo', esOscuro ? 'oscuro' : 'claro');
     });
 
     aplicarModoGuardado();
 
-
     /* =========================================================
        3. ANIMACIONES AL HACER SCROLL (REVEAL)
        ========================================================= */
 
-    // Elementos que vamos a animar al entrar en pantalla
-    const elementosReveal = document.querySelectorAll(
-        'section, .experiencia-card, .card, .item, .certificado'
-    );
+    const elementosReveal = document.querySelectorAll('section, .experiencia-card, .card, .item, .certificado');
 
-    elementosReveal.forEach(el => el.classList.add('reveal'));
+    elementosReveal.forEach((elemento) => elemento.classList.add('reveal'));
 
-    const observerReveal = new IntersectionObserver((entradas) => {
-        entradas.forEach(entrada => {
-            if (entrada.isIntersecting) {
-                entrada.target.classList.add('reveal-visible');
-                observerReveal.unobserve(entrada.target);
-            }
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+        elementosReveal.forEach((elemento) => elemento.classList.add('reveal-visible'));
+    } else {
+        const observerReveal = new IntersectionObserver((entradas) => {
+            entradas.forEach((entrada) => {
+                if (entrada.isIntersecting) {
+                    entrada.target.classList.add('reveal-visible');
+                    observerReveal.unobserve(entrada.target);
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
         });
-    }, {
-        threshold: 0.15,
-        rootMargin: '0px 0px -50px 0px'
-    });
 
-    elementosReveal.forEach(el => observerReveal.observe(el));
-
+        elementosReveal.forEach((elemento) => observerReveal.observe(elemento));
+    }
 
     /* =========================================================
        4. CONTADOR ANIMADO EN STATS
@@ -116,13 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let contadorYaAnimado = false;
 
     function animarContador(elemento) {
-        const target = parseInt(elemento.dataset.target, 10);
-        const duracion = 1500; // ms
+        const target = Number(elemento.dataset.target) || 0;
+        const duracion = 1500;
         const inicio = performance.now();
 
         function paso(ahora) {
             const progreso = Math.min((ahora - inicio) / duracion, 1);
-            // easing suave (ease-out)
             const valor = Math.floor(target * (1 - Math.pow(1 - progreso, 3)));
             elemento.textContent = valor;
 
@@ -136,42 +134,45 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(paso);
     }
 
-    const observerStats = new IntersectionObserver((entradas) => {
-        entradas.forEach(entrada => {
-            if (entrada.isIntersecting && !contadorYaAnimado) {
-                contadorYaAnimado = true;
-                numeros.forEach(animarContador);
-                observerStats.unobserve(entrada.target);
-            }
-        });
-    }, { threshold: 0.4 });
+    if (statsContainer && numeros.length) {
+        const observerStats = new IntersectionObserver((entradas, observer) => {
+            entradas.forEach((entrada) => {
+                if (entrada.isIntersecting && !contadorYaAnimado) {
+                    contadorYaAnimado = true;
+                    numeros.forEach(animarContador);
+                    observer.unobserve(entrada.target);
+                }
+            });
+        }, { threshold: 0.4 });
 
-    if (statsContainer) observerStats.observe(statsContainer);
-
+        observerStats.observe(statsContainer);
+    }
 
     /* =========================================================
        5. VALIDACIÓN DEL FORMULARIO DE CONTACTO
        ========================================================= */
 
-    const formulario   = document.getElementById('formularioContacto');
-    const campoNombre   = document.getElementById('nombre');
-    const campoEmail    = document.getElementById('email');
-    const campoMensaje  = document.getElementById('mensaje');
-    const errorNombre   = document.getElementById('errorNombre');
-    const errorEmail    = document.getElementById('errorEmail');
-    const errorMensaje  = document.getElementById('errorMensaje');
-    const formStatus    = document.getElementById('formStatus');
+    const formulario = document.getElementById('formularioContacto');
+    const campoNombre = document.getElementById('nombre');
+    const campoEmail = document.getElementById('email');
+    const campoMensaje = document.getElementById('mensaje');
+    const errorNombre = document.getElementById('errorNombre');
+    const errorEmail = document.getElementById('errorEmail');
+    const errorMensaje = document.getElementById('errorMensaje');
+    const formStatus = document.getElementById('formStatus');
 
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     function mostrarError(input, spanError, mensaje) {
         input.classList.add('input-error');
         spanError.textContent = mensaje;
+        input.setAttribute('aria-invalid', 'true');
     }
 
     function limpiarError(input, spanError) {
         input.classList.remove('input-error');
         spanError.textContent = '';
+        input.setAttribute('aria-invalid', 'false');
     }
 
     function validarNombre() {
@@ -204,89 +205,120 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     }
 
-    // Validación en tiempo real
-    campoNombre.addEventListener('blur', validarNombre);
-    campoEmail.addEventListener('blur', validarEmail);
-    campoMensaje.addEventListener('blur', validarMensaje);
+    function actualizarEstadoFormulario(mensaje, tipo) {
+        formStatus.textContent = mensaje;
+        formStatus.className = `form-status ${tipo}`.trim();
+    }
 
-    formulario.addEventListener('submit', (evento) => {
+    campoNombre?.addEventListener('blur', validarNombre);
+    campoEmail?.addEventListener('blur', validarEmail);
+    campoMensaje?.addEventListener('blur', validarMensaje);
+
+    formulario?.addEventListener('submit', (evento) => {
         evento.preventDefault();
 
-        const nombreOk  = validarNombre();
-        const emailOk   = validarEmail();
+        const nombreOk = validarNombre();
+        const emailOk = validarEmail();
         const mensajeOk = validarMensaje();
 
         if (nombreOk && emailOk && mensajeOk) {
-            formStatus.textContent = '¡Gracias! Tu mensaje fue enviado correctamente.';
-            formStatus.classList.remove('form-status-error');
-            formStatus.classList.add('form-status-exito');
-
-            // Nota: este formulario no tiene backend conectado todavía.
-            // Para enviarlo de verdad, conectalo con un servicio como Formspree.
+            actualizarEstadoFormulario('¡Gracias! Tu mensaje fue enviado correctamente.', 'form-status-exito');
             formulario.reset();
 
-            setTimeout(() => {
-                formStatus.textContent = '';
-                formStatus.classList.remove('form-status-exito');
+            window.setTimeout(() => {
+                actualizarEstadoFormulario('', '');
             }, 5000);
-
         } else {
-            formStatus.textContent = 'Revisá los campos marcados antes de enviar.';
-            formStatus.classList.remove('form-status-exito');
-            formStatus.classList.add('form-status-error');
+            actualizarEstadoFormulario('Revisá los campos marcados antes de enviar.', 'form-status-error');
         }
     });
-
 
     /* =========================================================
        6. BOTÓN "VOLVER ARRIBA"
        ========================================================= */
 
     const btnVolverArriba = document.getElementById('btnVolverArriba');
+    let ticking = false;
+
+    function actualizarBotonVolverArriba() {
+        if (!btnVolverArriba) return;
+
+        btnVolverArriba.classList.toggle('visible', window.scrollY > 400);
+    }
 
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 400) {
-            btnVolverArriba.classList.add('visible');
-        } else {
-            btnVolverArriba.classList.remove('visible');
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                actualizarBotonVolverArriba();
+                ticking = false;
+            });
+            ticking = true;
         }
+    }, { passive: true });
+
+    btnVolverArriba?.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
 
-    btnVolverArriba.addEventListener("click", () => {
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-});
+    actualizarBotonVolverArriba();
 
     /* =========================================================
        7. CAROUSEL DE CERTIFICACIONES
        ========================================================= */
 
-    const track   = document.getElementById('carouselTrack');
+    const track = document.getElementById('carouselTrack');
 
     if (track) {
-        const dots    = document.querySelectorAll('.carousel-dot');
+        const dots = document.querySelectorAll('.carousel-dot');
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
-        const total   = dots.length;
-        let current   = 0;
+        const total = dots.length;
+        let current = 0;
+        let autoplayId;
 
         function goTo(index) {
             current = (index + total) % total;
             track.style.transform = `translateX(-${current * 100}%)`;
-            dots.forEach((d, i) => {
-                d.classList.toggle('active', i === current);
-                d.setAttribute('aria-selected', i === current);
+            dots.forEach((dot, indexDot) => {
+                const isActive = indexDot === current;
+                dot.classList.toggle('active', isActive);
+                dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
             });
         }
 
-        btnPrev.addEventListener('click', () => goTo(current - 1));
-        btnNext.addEventListener('click', () => goTo(current + 1));
-        dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.index)));
+        function stopAutoplay() {
+            if (autoplayId) {
+                window.clearInterval(autoplayId);
+            }
+        }
 
-        // Auto-avance cada 4 segundos
-        setInterval(() => goTo(current + 1), 4000);
+        function startAutoplay() {
+            stopAutoplay();
+            autoplayId = window.setInterval(() => goTo(current + 1), 4000);
+        }
+
+        btnPrev?.addEventListener('click', () => {
+            goTo(current - 1);
+            startAutoplay();
+        });
+
+        btnNext?.addEventListener('click', () => {
+            goTo(current + 1);
+            startAutoplay();
+        });
+
+        dots.forEach((dot) => dot.addEventListener('click', () => {
+            goTo(Number(dot.dataset.index));
+            startAutoplay();
+        }));
+
+        track.addEventListener('mouseenter', stopAutoplay);
+        track.addEventListener('mouseleave', startAutoplay);
+
+        goTo(0);
+        startAutoplay();
     }
-
 });
