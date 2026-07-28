@@ -1,0 +1,201 @@
+@use "../abstracts/variables" as *;
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-oscuro);
+    padding: 18px 8%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--color-acento);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+
+    h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+
+        a {
+            color: var(--color-fondo);
+            text-decoration: none;
+        }
+
+        span {
+            color: var(--color-acento);
+        }
+    }
+}
+
+nav {
+
+    ul {
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+    }
+
+    a {
+        color: var(--color-fondo);
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 600;
+        position: relative;
+        transition: color var(--transicion);
+
+        &:hover {
+            color: var(--color-acento);
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--color-acento);
+            left: 0;
+            bottom: -6px;
+            transition: width var(--transicion);
+        }
+
+        &:hover::after {
+            width: 100%;
+        }
+    }
+}
+
+.header-acciones {
+    display: none;
+    align-items: center;
+    gap: 14px;
+}
+
+.modo-oscuro-btn {
+    background: transparent;
+    border: 2px solid var(--color-acento);
+    color: var(--color-fondo);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .95rem;
+    transition: background var(--transicion), transform var(--transicion);
+
+    &:hover {
+        background: var(--color-acento);
+        transform: rotate(20deg);
+    }
+}
+
+.menu-hamburguesa {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+
+    span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background: var(--color-fondo);
+        border-radius: 3px;
+        transition: transform var(--transicion), opacity var(--transicion);
+    }
+
+    &.activo {
+
+        span:nth-child(1) {
+            transform: translateY(8.5px) rotate(45deg);
+        }
+
+        span:nth-child(2) {
+            opacity: 0;
+        }
+
+        span:nth-child(3) {
+            transform: translateY(-8.5px) rotate(-45deg);
+        }
+    }
+}
+
+.overlay-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 90;
+    opacity: 0;
+    transition: opacity var(--transicion);
+
+    &.activo {
+        display: block;
+        opacity: 1;
+    }
+}
+
+@media (max-width:768px){
+
+    .header-acciones{
+        display:flex;
+    }
+
+    .menu-hamburguesa{
+        display:flex;
+    }
+
+    header{
+        padding:16px 5%;
+
+        h1{
+            font-size:1.8rem;
+        }
+    }
+
+    nav{
+        position:fixed;
+        top:0;
+        right:-100%;
+        width:75%;
+        max-width:320px;
+        height:100vh;
+        background:var(--color-oscuro);
+        z-index:95;
+        padding:100px 30px 30px;
+        transition:right .4s ease;
+        box-shadow:-8px 0 25px rgba(0,0,0,.25);
+
+        &.activo{
+            right:0;
+        }
+
+        ul{
+            flex-direction:column;
+            align-items:flex-start;
+            gap:1.8rem;
+        }
+
+        a{
+            font-size:1.1rem;
+        }
+    }
+}
+
+@media (max-width:480px){
+
+    header h1{
+        font-size:1.5rem;
+    }
+
+    nav a{
+        font-size:.88rem;
+    }
+
+}
