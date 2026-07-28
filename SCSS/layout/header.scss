@@ -1,28 +1,28 @@
 @use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--color-oscuro);
+    @include flex-between;
+
+    background: $color-primary;
     padding: 18px 8%;
     position: sticky;
     top: 0;
-    z-index: 100;
-    border-bottom: 3px solid var(--color-acento);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    z-index: $z-header;
+    border-bottom: 3px solid $color-accent;
+    box-shadow: $shadow-md;
 
     h1 {
         font-size: 2.2rem;
-        font-weight: 800;
+        font-weight: $fw-black;
 
         a {
-            color: var(--color-fondo);
+            color: $color-white;
             text-decoration: none;
         }
 
         span {
-            color: var(--color-acento);
+            color: $color-accent;
         }
     }
 }
@@ -30,21 +30,20 @@ header {
 nav {
 
     ul {
-        display: flex;
-        align-items: center;
+        @include flex(center, center);
         gap: 2.5rem;
     }
 
     a {
-        color: var(--color-fondo);
+        color: $color-white;
         text-decoration: none;
-        font-size: 1rem;
-        font-weight: 600;
+        font-size: $fs-md;
+        font-weight: $fw-semibold;
         position: relative;
-        transition: color var(--transicion);
+        transition: color $transition-normal;
 
         &:hover {
-            color: var(--color-acento);
+            color: $color-accent;
         }
 
         &::after {
@@ -52,10 +51,10 @@ nav {
             position: absolute;
             width: 0;
             height: 2px;
-            background: var(--color-acento);
+            background: $color-accent;
             left: 0;
             bottom: -6px;
-            transition: width var(--transicion);
+            transition: width $transition-normal;
         }
 
         &:hover::after {
@@ -71,21 +70,23 @@ nav {
 }
 
 .modo-oscuro-btn {
+    @include flex-center;
+
     background: transparent;
-    border: 2px solid var(--color-acento);
-    color: var(--color-fondo);
+    border: 2px solid $color-accent;
+    color: $color-white;
     width: 38px;
     height: 38px;
-    border-radius: 50%;
+    border-radius: $radius-circle;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: .95rem;
-    transition: background var(--transicion), transform var(--transicion);
+
+    transition:
+        background $transition-normal,
+        transform $transition-normal;
 
     &:hover {
-        background: var(--color-acento);
+        background: $color-accent;
         transform: rotate(20deg);
     }
 }
@@ -105,9 +106,12 @@ nav {
         display: block;
         width: 100%;
         height: 3px;
-        background: var(--color-fondo);
+        background: $color-white;
         border-radius: 3px;
-        transition: transform var(--transicion), opacity var(--transicion);
+
+        transition:
+            transform $transition-normal,
+            opacity $transition-normal;
     }
 
     &.activo {
@@ -131,9 +135,9 @@ nav {
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,.5);
-    z-index: 90;
+    z-index: $z-menu;
     opacity: 0;
-    transition: opacity var(--transicion);
+    transition: opacity $transition-normal;
 
     &.activo {
         display: block;
@@ -141,61 +145,66 @@ nav {
     }
 }
 
-@media (max-width:768px){
+@include tablet {
 
-    .header-acciones{
-        display:flex;
+    .header-acciones {
+        display: flex;
     }
 
-    .menu-hamburguesa{
-        display:flex;
+    .menu-hamburguesa {
+        display: flex;
     }
 
-    header{
-        padding:16px 5%;
+    header {
+        padding: 16px 5%;
 
-        h1{
-            font-size:1.8rem;
+        h1 {
+            font-size: 1.8rem;
         }
     }
 
-    nav{
-        position:fixed;
-        top:0;
-        right:-100%;
-        width:75%;
-        max-width:320px;
-        height:100vh;
-        background:var(--color-oscuro);
-        z-index:95;
-        padding:100px 30px 30px;
-        transition:right .4s ease;
-        box-shadow:-8px 0 25px rgba(0,0,0,.25);
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 75%;
+        max-width: 320px;
+        height: 100vh;
+        background: $color-primary;
+        z-index: $z-menu;
+        padding: 100px 30px 30px;
+        transition: right .4s ease;
+        box-shadow: $shadow-lg;
 
-        &.activo{
-            right:0;
+        &.activo {
+            right: 0;
         }
 
-        ul{
-            flex-direction:column;
-            align-items:flex-start;
-            gap:1.8rem;
+        ul {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.8rem;
         }
 
-        a{
-            font-size:1.1rem;
+        a {
+            font-size: $fs-lg;
         }
     }
 }
 
-@media (max-width:480px){
+@include mobile {
 
-    header h1{
-        font-size:1.5rem;
+    header {
+
+        h1 {
+            font-size: 1.5rem;
+        }
     }
 
-    nav a{
-        font-size:.88rem;
-    }
+    nav {
 
+        a {
+            font-size: .88rem;
+        }
+    }
 }

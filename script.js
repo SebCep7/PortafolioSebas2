@@ -277,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnNext = document.getElementById('btnNext');
         const total = dots.length;
         let current = 0;
-        let autoplayId;
 
         function goTo(index) {
             current = (index + total) % total;
@@ -289,36 +288,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        function stopAutoplay() {
-            if (autoplayId) {
-                window.clearInterval(autoplayId);
-            }
-        }
-
-        function startAutoplay() {
-            stopAutoplay();
-            autoplayId = window.setInterval(() => goTo(current + 1), 4000);
-        }
-
         btnPrev?.addEventListener('click', () => {
             goTo(current - 1);
-            startAutoplay();
         });
 
         btnNext?.addEventListener('click', () => {
             goTo(current + 1);
-            startAutoplay();
         });
 
         dots.forEach((dot) => dot.addEventListener('click', () => {
             goTo(Number(dot.dataset.index));
-            startAutoplay();
         }));
 
-        track.addEventListener('mouseenter', stopAutoplay);
-        track.addEventListener('mouseleave', startAutoplay);
-
         goTo(0);
-        startAutoplay();
     }
 });
